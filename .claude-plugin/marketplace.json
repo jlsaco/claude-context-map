@@ -1,0 +1,15 @@
+{
+  "name": "claude-context-map",
+  "description": "Mods de Claude Code de jlsaco: context-map, el mapa de la ventana de contexto",
+  "owner": {
+    "name": "jlsaco",
+    "url": "https://github.com/jlsaco"
+  },
+  "plugins": [
+    {
+      "name": "context-map",
+      "source": "./",
+      "description": "Mapa de la ventana de contexto de Claude Code: qué está cargado, en qué orden y cuánto ocupa"
+    }
+  ]
+}
