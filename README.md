@@ -2,6 +2,8 @@
 
 Un mod de Claude Code que abre un panel con el **mapa de tu ventana de contexto**: qué está cargado, en qué orden lo lee el modelo y cuánto ocupa cada cosa, turno a turno.
 
+![El panel context-map: franja de zonas, herramientas y system prompt en una línea, y los mensajes agrupados por turno con su posición, barra, porcentaje y tokens](docs/screenshot.png)
+
 ## Instalación
 
 En una sesión de Claude Code, en la terminal:
