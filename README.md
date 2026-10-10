@@ -55,7 +55,7 @@ claude plugin validate .
 claude plugin test .
 ```
 
-Para probar cambios sin instalar: `claude --plugin-dir .`. Con el repo añadido como marketplace local (`claude plugin marketplace add <carpeta>`), Claude Code lee el plugin de la carpeta misma y `/reload-plugins` aplica cada cambio.
+Para probar cambios sin instalar: `claude --plugin-dir .`. Una instalación desde un marketplace, incluso uno local (`claude plugin marketplace add <carpeta>`), usa una copia en caché por versión: sube `version` en `plugin.json` y ejecuta `claude plugin marketplace update claude-context-map` y `claude plugin update context-map@claude-context-map`.
 
 ## Licencia
 
