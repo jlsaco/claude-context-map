@@ -57,6 +57,7 @@ export const promptOf = (msg: ApiMsg) => {
     const text = block.text.trim()
     if (text.length === 0 || text.includes('<system-reminder>') || isContextBlock(text)) continue
     if (SKILL_BASE.test(text) || /^<local-command-|^Caveat:/.test(text)) continue
+    if (/^This session is being continued from a previous conversation/.test(text)) return 'Resumen de la compactación'
     if (text.includes('<task-notification>') || text.includes('<agent-message from="')) {
       const summary = text.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]
 

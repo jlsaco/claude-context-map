@@ -77,7 +77,8 @@ const engine = (
   on('ui.status', () => ({ value: undefined }) as never)
   on('command.register', () => ({ value: undefined }) as never)
   on('session.start', (_, e) => e as never)
-  mock.clock(on)
+
+  return mock.clock(on)
 }
 
 const loadContext = ($: Engine) =>
@@ -420,4 +421,24 @@ test('settings stored by an earlier session load when the session starts', async
   expect(await ui.find({ key: 'chip:mcp' })).toBeUndefined()
   const root = (await ui.drawn()) as unknown as { props: { backgroundColor?: string } }
   expect(root.props.backgroundColor).toBeUndefined()
+})
+
+test('maps the conversation again after a compaction, its summary the first turn', async ($, on) => {
+  const messages: unknown[] = [...MIXED]
+  const clock = engine(on, messages)
+  on('session.compact', () => ({ messages: [{ role: 'user', text: 'resumen', toolUses: [] }] }) as never)
+  await loadContext($)
+  await $.command.run({ command: 'context-map', args: '' } as never)
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect(await ui.find({ type: 'Text', text: /^Turno 2 · / })).toBeDefined()
+
+  messages.splice(0, messages.length, {
+    role: 'user',
+    content: [{ type: 'text', text: 'This session is being continued from a previous conversation that ran out of context.' }],
+  })
+  await $.session.compact({ trigger: 'manual', messages: [{ role: 'user', text: 'hola', toolUses: [] }] } as never)
+  await clock.advance(300)
+
+  expect(await ui.find({ type: 'Text', text: /Resumen de la compactación/ })).toBeDefined()
+  expect(await ui.find({ type: 'Text', text: /^Turno 2 · / })).toBeUndefined()
 })

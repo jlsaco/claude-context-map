@@ -1,6 +1,6 @@
 {
   "name": "context-map",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Panel que muestra en qué orden y posición están cargados en la ventana de contexto las herramientas, el system prompt, CLAUDE.md, rules, skills, MCP, subagentes, memoria y recordatorios, turno a turno",
   "author": { "name": "jlsaco", "url": "https://github.com/jlsaco" },
   "homepage": "https://github.com/jlsaco/claude-context-map",

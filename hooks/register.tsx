@@ -20,6 +20,8 @@ import { DEFAULT_SETTINGS, withDefaults, SPARK, EIGHTHS, THEMES, KIND_TONE, SPIN
 
 const PANE = 'context-map'
 const TITLE = 'Mapa de contexto'
+// How long after a compaction or /clear to read the transcript the engine installed.
+const SETTLE_MS = 300
 
 const system = atom({ plugin: 'context-map', key: 'system' } as const, null)
 const context = atom({ plugin: 'context-map', key: 'context' } as const, null)
@@ -127,6 +129,11 @@ const refresh = async ($: EngineInterface) => {
 const animate = ($: EngineInterface) => {
   for (let ms = 40; ms <= GROW_MS + 40; ms += 40) $.clock.after(ms, () => $.ui.invalidate('ui.render'))
   for (let ms = GROW_MS + 120; ms <= PULSE_MS + 120; ms += 120) $.clock.after(ms, () => $.ui.invalidate('ui.render'))
+}
+
+const remap = ($: EngineInterface) => {
+  reask($)
+  $.clock.after(SETTLE_MS, () => void refresh($).catch(() => undefined))
 }
 
 // Cached answers the engine gave before this module loaded are asked again
@@ -249,6 +256,22 @@ export const register: Register = on => {
   on('turn.complete', async ($, e, next) => {
     const result = await next(e)
     if (e.agentId === undefined) void refresh($).catch(() => undefined)
+
+    return result
+  })
+
+  // A compaction replaces the transcript without ending a turn: map it again
+  // once the engine has installed the new one, and ask for its context anew.
+  on('session.compact', async ($, e, next) => {
+    const result = await next(e)
+    if (e.agentId === undefined && e.trigger !== 'precompute' && result.skip === undefined) remap($)
+
+    return result
+  })
+
+  on('session.end', async ($, e, next) => {
+    const result = await next(e)
+    if (e.reason === 'clear') remap($)
 
     return result
   })
